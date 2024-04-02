@@ -99,9 +99,8 @@ def encode_audio_common(
 
 
 class StreamingInputs(BaseModel):
-#    speaker_embedding: List[float]
-#    gpt_cond_latent: List[List[float]]
-    speaker: str
+    speaker_embedding: List[float]
+    gpt_cond_latent: List[List[float]]
     text: str
     language: str
     add_wav_header: bool = True
@@ -109,10 +108,8 @@ class StreamingInputs(BaseModel):
 
 
 def predict_streaming_generator(parsed_input: dict = Body(...)):
-    #speaker_embedding = torch.tensor(parsed_input.speaker_embedding).unsqueeze(0).unsqueeze(-1)
-    #gpt_cond_latent = torch.tensor(parsed_input.gpt_cond_latent).reshape((-1, 1024)).unsqueeze(0)
-    speaker_embedding = torch.tensor(model.speaker_manager.speakers[parsed_input.speaker]["speaker_embedding"].cpu().squeeze().half().tolist()).unsqueeze(0).unsqueeze(-1)
-    gpt_cond_latent = torch.tensor(model.speaker_manager.speakers[parsed_input.speaker]["gpt_cond_latent"].cpu().squeeze().half().tolist()).reshape((-1, 1024)).unsqueeze(0)
+    speaker_embedding = torch.tensor(parsed_input.speaker_embedding).unsqueeze(0).unsqueeze(-1)
+    gpt_cond_latent = torch.tensor(parsed_input.gpt_cond_latent).reshape((-1, 1024)).unsqueeze(0)
     text = parsed_input.text
     language = parsed_input.language
 
@@ -146,18 +143,15 @@ def predict_streaming_endpoint(parsed_input: StreamingInputs):
     )
 
 class TTSInputs(BaseModel):
-    #speaker_embedding: List[float]
-    #gpt_cond_latent: List[List[float]]
-    speaker: str
+    speaker_embedding: List[float]
+    gpt_cond_latent: List[List[float]]
     text: str
     language: str
 
 @app.post("/tts")
 def predict_speech(parsed_input: TTSInputs):
-    #speaker_embedding = torch.tensor(parsed_input.speaker_embedding).unsqueeze(0).unsqueeze(-1)
-    #gpt_cond_latent = torch.tensor(parsed_input.gpt_cond_latent).reshape((-1, 1024)).unsqueeze(0)
-    speaker_embedding = torch.tensor(model.speaker_manager.speakers[parsed_input.speaker]["speaker_embedding"].cpu().squeeze().half().tolist()).unsqueeze(0).unsqueeze(-1)
-    gpt_cond_latent = torch.tensor(model.speaker_manager.speakers[parsed_input.speaker]["gpt_cond_latent"].cpu().squeeze().half().tolist()).reshape((-1, 1024)).unsqueeze(0)
+    speaker_embedding = torch.tensor(parsed_input.speaker_embedding).unsqueeze(0).unsqueeze(-1)
+    gpt_cond_latent = torch.tensor(parsed_input.gpt_cond_latent).reshape((-1, 1024)).unsqueeze(0)
     text = parsed_input.text
     language = parsed_input.language
 
